@@ -57,7 +57,6 @@ def barcodepage(request):
         machine_lines = zip(machine_lines_name, machine_lines_short)
 
         lk_lines = ['A1', 'B1', 'A2', 'B2']
-
         sql02 = f"""SELECT rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL,
                     MAX(CASE WHEN ir.OptionName = 'Roll' THEN CASE WHEN ir.InspectionStatus = 'NG' THEN CONCAT(CAST(ir.InspectionValue AS VARCHAR(MAX)), ' (', CAST(ir.DefectCode AS VARCHAR(MAX)), ')') ELSE CAST(ir.InspectionValue AS VARCHAR(MAX)) END END) AS Roll,
                     MAX(CASE WHEN ir.OptionName = 'Roll' THEN CASE WHEN ir.InspectionStatus = 'NG' THEN 1 ELSE 0 END END) AS Roll_status,
@@ -84,11 +83,11 @@ def barcodepage(request):
                     join [PMGMES].[dbo].[AbpUsers] au
                     on rc.CreatorUserId = au.Id
                     WHERE rc.MachineName = '{mach}'
-                        AND rc.WorkCenterTypeName = '{plant}'
+                        --AND rc.WorkCenterTypeName = '{plant}'
                         AND rc.LineName = '{line}'
                         AND ((rc.Period > 5 AND rc.InspectionDate = '{data_date1}')
                             OR (rc.Period <= 5 AND rc.InspectionDate = '{data_date2}'))
-                    AND rc.Period = '{time}'
+                    AND cast(rc.Period  as int)  = {int(time)}
                     AND wo.StartDate is not NULL
                     Group by rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL, au.Name"""
         text_to_convert_dict = db_mes.select_sql_dict(sql02)
@@ -179,7 +178,7 @@ def barcodepage2(request):
         sql01 = f"""SELECT id as mach_id, name as machine_name
                     FROM [PMGMES].[dbo].[PMG_DML_DataModelList]
                     WHERE DataModelTypeId = 'DMT000003'
-                    and Abbreviation like '%{plant}%'
+                    and name like '%{plant}%'
                     order by machine_name"""
         machine_lines_dicts = db_mes.select_sql_dict(sql01)
 
@@ -188,7 +187,6 @@ def barcodepage2(request):
         machine_lines = zip(machine_lines_name, machine_lines_short)
 
         lk_lines = ['A1', 'B1', 'A2', 'B2']
-
         sql02 = f"""SELECT rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL,
                     MAX(CASE WHEN ir.OptionName = 'Roll' THEN CASE WHEN ir.InspectionStatus = 'NG' THEN CONCAT(CAST(ir.InspectionValue AS VARCHAR(MAX)), ' (', CAST(ir.DefectCode AS VARCHAR(MAX)), ')') ELSE CAST(ir.InspectionValue AS VARCHAR(MAX)) END END) AS Roll,
                     MAX(CASE WHEN ir.OptionName = 'Roll' THEN CASE WHEN ir.InspectionStatus = 'NG' THEN 1 ELSE 0 END END) AS Roll_status,
@@ -215,11 +213,11 @@ def barcodepage2(request):
                     join [PMGMES].[dbo].[AbpUsers] au
                     on rc.CreatorUserId = au.Id
                     WHERE rc.MachineName = '{mach}'
-                        AND rc.WorkCenterTypeName = '{plant}'
+                        --AND rc.WorkCenterTypeName = '{plant}'
                         AND rc.LineName = '{line}'
                         AND ((rc.Period > 5 AND rc.InspectionDate = '{data_date1}')
                             OR (rc.Period <= 5 AND rc.InspectionDate = '{data_date2}'))
-                    AND rc.Period = '{time}'
+                    AND cast(rc.Period  as int)  = {int(time)}
                     AND wo.StartDate is not NULL
                     Group by rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL, au.Name"""
         text_to_convert_dict = db_mes.select_sql_dict(sql02)
@@ -290,7 +288,7 @@ def search_for_runcard(request):
         sql01 = f"""SELECT id as mach_id, name as machine_name
                     FROM [PMGMES].[dbo].[PMG_DML_DataModelList]
                     WHERE DataModelTypeId = 'DMT000003'
-                    and Abbreviation like '%{plant}%'
+                    and name like '%{plant}%'
                     order by machine_name"""
         machine_lines_dicts = db_mes.select_sql_dict(sql01)
         lk_lines = ['A1', 'B1', 'A2', 'B2']
@@ -327,7 +325,7 @@ def search_for_runcard(request):
                             and LineName = '{search_line}' 
                             and ((Period > 5 and InspectionDate = '{search_date}')
                             or (Period <= 5 and InspectionDate = DATEADD(DAY, 1 , '{search_date}')))
-                            and Period = '{search_time}'
+                            and cast(Period as int) = '{int(search_time)}'
                             group by rc.WorkOrderId, rc.Id
                             """
                 id_dict = db_mes.select_sql_dict(sql03)
