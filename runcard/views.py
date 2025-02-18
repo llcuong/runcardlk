@@ -320,12 +320,12 @@ def search_for_runcard(request):
                             FROM [PMGMES].[dbo].[PMG_MES_RunCard] rc
                             left join [PMGMES].[dbo].[PMG_MES_IPQCInspectingRecord] ir 
                             on ir.RunCardId = rc.id
-                            where WorkCenterTypeName = '{search_plant}' 
+                            where WorkCenterName LIKE '%{search_plant}%' 
                             and MachineName = '{search_mach}' 
                             and LineName = '{search_line}' 
                             and ((Period > 5 and InspectionDate = '{search_date}')
                             or (Period <= 5 and InspectionDate = DATEADD(DAY, 1 , '{search_date}')))
-                            and cast(Period as int) = '{int(search_time)}'
+                            and cast(Period as int) = {int(search_time)}
                             group by rc.WorkOrderId, rc.Id
                             """
                 id_dict = db_mes.select_sql_dict(sql03)
