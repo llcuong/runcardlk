@@ -353,6 +353,13 @@
                         {{ machine_name }}
                     </a>
                 {% endfor %}
+                {% if "linux" in request.META.HTTP_USER_AGENT|lower %}
+                    <div class="runcard-left-line-button-2">
+                        <button class="button" style="margin-top: 100%; background-color: #ccc" onclick="window.location.href='search'">
+                            🔎
+                        </button>
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="runcard-middle">
@@ -477,7 +484,7 @@
 
         </div>
         <div class="runcard-right-time-button">
-            <p style="font-size: 1.5vh; margin-top: 10px; margin-bottom: 0px; margin-left: 15%"><b>時間<br>Time</b></p>
+            <p style="font-size: 1.5vh; margin-top: 1px; margin-bottom: 0px; margin-left: 15%"><b>時間<br>Time</b></p>
             {% for ptime in period_times %}
                 {% if current_time > 5 %}
                     {% if ptime|add:"0" <= current_time %}
@@ -513,9 +520,11 @@
                     {% endif %}
                 {% endif %}
             {% endfor %}
-            <button class="button" style="background-color: #ccc" onclick="window.location.href='search'">
-                🏮
-            </button>
+            {% if "windows" in request.META.HTTP_USER_AGENT|lower %}
+                <button class="button" style="background-color: #ccc" onclick="window.location.href='search'">
+                    🔎
+                </button>
+            {% endif %}
         </div>
     </div>
 </body>

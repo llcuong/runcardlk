@@ -88,7 +88,7 @@ def barcodepage(request):
                         AND ((rc.Period > 5 AND rc.InspectionDate = '{data_date1}')
                             OR (rc.Period <= 5 AND rc.InspectionDate = '{data_date2}'))
                     AND cast(rc.Period  as int)  = {int(time)}
-                    AND wo.StartDate is not NULL
+                    --AND wo.StartDate is not NULL
                     Group by rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL, au.Name"""
         text_to_convert_dict = db_mes.select_sql_dict(sql02)
         wo_len = len(text_to_convert_dict)
@@ -218,7 +218,7 @@ def barcodepage2(request):
                         AND ((rc.Period > 5 AND rc.InspectionDate = '{data_date1}')
                             OR (rc.Period <= 5 AND rc.InspectionDate = '{data_date2}'))
                     AND cast(rc.Period  as int)  = {int(time)}
-                    AND wo.StartDate is not NULL
+                    --AND wo.StartDate is not NULL
                     Group by rc.id, rc.WorkOrderId, wo.PartNo, wo.CustomerCode, wo.CustomerName, wo.ProductItem, wo.AQL, au.Name"""
         text_to_convert_dict = db_mes.select_sql_dict(sql02)
         wo_len = len(text_to_convert_dict)
